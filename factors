@@ -1,55 +1,36 @@
 #!/usr/bin/python3
-import sys
 from sys import argv
-
-"""
-File_name: factors
-Created: 28th of January, 2024
-Author: Sophie Ododa
-Size: undefined
-Project: RSA-Factoring-Challenge
-Status: submitted.
-"""
+import math
+"""Factorize as many numbers as possible into a product of 2 smaller nums"""
 
 
-def factorize(value):
-
-    """
-    # Factorize as many numbers as possible into..
-    # ..a product of two smaller numbers.
-    # VARIABLE(" "):
-    # factorize(int) Factorize all the things!
-    # Usage: factors <file>
-    # Output format: n=p*q
-    """
-    i = 2
-
-    if value < 2:
-        return
-    print()
-    print(value, "<- ")
-    while value % i:
-        i += 1
-    print("{:.0f}={:.0f}*{:.0f}".format(value, value / i, i))
-    print()
-    print(value, "<- ")
+def factory(num):
+    """gets the factors of a number"""
+    if num % 2 == 0:
+        i = 2
+        print("{}={}*{}".format(num, int(num//i), i))
+    else:
+        sq = int(math.sqrt(num)) + 1
+        for i in range(3, sq, +2):
+            if num % i == 0:
+                print("{}={}*{}".format(num, int(num//i), i))
+                return
+            if num % (sq + i) == 0:
+                print("{}={}*{}".format(num, sq + i, int(num//(sq + i))))
+                return
+            if num % (sq - i) == 0:
+                print("{}={}*{}".format(num, sq - 1, int(num//(sq - i))))
+                return
 
 
-if len(argv) != 2:
-    exit()
+def factors(filename):
+    """read_file and prints them out"""
 
-try:
-    with open(argv[1]) as file:
-        line = file.readline()
+    with open(filename, encoding="utf-8") as my_file:
+        for i in my_file.readlines():
+            n = int(i)
+            result = factory(n)
 
-        while line != "":
-            value = int(line.split('\n')[0])
-            factorize(value)
-            line = file.readline()
-except FileNotFoundError:
-    print(f'File not found: {argv}')
-except ValueError:
-    print(f'Invalid input in the file: {argv}')
-except Exception as e:
-    print(f'An error occurred: {str(e)}')
-    pass
+
+if __name__ == "__main__":
+    factors(argv[1])
