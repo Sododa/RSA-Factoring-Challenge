@@ -1,64 +1,48 @@
-#!/usr/bin/python3
-from sys import argv
-import math
-import sys
-import time
-"""gets the first two """
+#!/usr/bin/env bash
+#is a challenge
+check_factor()
+{
+	if [ $# -ne 3 ];
+        then
+                args=("$@")
+                count=0
+                num2=1
+                for a in ${args[*]};
+                do
+                        if [ $count -gt 1 ];
+                        then
+                                num2=$(echo $a*$num2 | bc)
+                        fi
+                        count=$((count + 1))
+                done
+        else
+                num2=$3
+        fi
 
-def gcd(a, b):
-    while b:
-        a, b = b, a % b
-    return a
+        num1=$2
+        num=$(echo "$1" | tr ':' '=')
 
-def pollards_rho(n):
-    if n % 2 == 0:
-        return 2, n // 2
+        result=$(echo "if($num2 > $num1) 1 else 0" | bc)
+	        if ((result == 1)); then
+		        numcp=$num1
+		        num1=$num2
+		        num2=$numcp
+                fi
 
-    x = 2
-    y = 2
-    d = 1
+        echo "$num$num1*$num2"
+}
 
-    f = lambda x: (x**2 + 1) % n
+if [ $# -ne 1 ]
+then
+        echo 'Usage: rsa <file>'
+        exit 1
+else
 
-    while d == 1:
-        x = f(x)
-        y = f(f(y))
-        d = gcd(abs(x - y), n)
+        while read i
+        do
 
-    return d, n // d
+                result=$(factor "$i")
+                check_factor $result
 
-def factorize_rsa_file(filename):
-    with open(filename, 'r') as file:
-        lines = file.read().splitlines()
-
-    results = []
-
-    for line in lines:
-        number = int(line)
-        factors = pollards_rho(number)
-        result = f"{number}={factors[0]}*{factors[1]}"
-        results.append(result)
-
-    return results
-
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: ./rsa <file>")
-        sys.exit(1)
-
-    filename = sys.argv[1]
-
-    start_time = time.time()
-    results = factorize_rsa_file(filename)
-    end_time = time.time()
-
-    for result in results:
-        print(result)
-
-    print("\nExecution time:")
-    print(f"real    {end_time - start_time:.3f}s")
-    print(f"user    {end_time - start_time:.3f}s")
-    print(f"sys     0.001s")
-
-if __name__ == "__main__":
-    main()
+        done < "$1"
+fi
