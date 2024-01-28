@@ -3,14 +3,14 @@
 
 check_factor()
 {
-	if [$#  -ne 3 ];
-	then
-		args= ("$@")
+	if [ $# -ne 3 ];
+        then
+                args=("$@")
                 count=0
                 num2=1
                 for a in ${args[*]};
                 do
-                        if [$count -gt 1 ];
+                        if [ $count -gt 1 ];
                         then
                                 num2=$(echo $a*$num2 | bc)
                         fi
